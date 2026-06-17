@@ -1,12 +1,14 @@
 import "dotenv/config";
-import express, { Request, Response } from "express";
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
+import { auth } from "./auth/auth.js";
 
-const app = express();
+const app = new Hono();
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World").status(200);
-});
+app.on(["GET", "POST"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
-app.listen(3000, () => {
-  console.log(process.env.DATABASE_URL);
-});
+app.get("/", (c) => c.json({ status: "ok" }));
+
+const PORT = Number(process.env.PORT) || 3000;
+
+serve({ fetch: app.fetch, port: PORT });

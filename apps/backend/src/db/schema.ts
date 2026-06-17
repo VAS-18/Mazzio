@@ -1,19 +1,9 @@
 import { jsonb, pgTable, primaryKey, text, timestamp, uuid, vector } from "drizzle-orm/pg-core";
-
-export const users = pgTable("users", {
-  id:              uuid("id").primaryKey().defaultRandom(),
-  email:           text("email").notNull(),
-  name:            text("name").notNull(),
-  timezone:        text("timezone").notNull().default("Asia/Kolkata"),
-  digestFrequency: text("digest_frequency").notNull().default("daily"),
-  digestLastSent:  timestamp("digest_last_sent", { withTimezone: true }),
-  createdAt:       timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt:       timestamp("updated_at", { withTimezone: true }).defaultNow(),
-});
+import { user } from "../auth/auth-schema.ts";
 
 export const entries = pgTable("entries", {
   id:        uuid("id").primaryKey().defaultRandom(),
-  userId:    uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId:    text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   type:      text("type").notNull(),
   title:     text("title"),
   content:   text("content"),
@@ -37,7 +27,7 @@ export const entries = pgTable("entries", {
 
 export const tags = pgTable("tags", {
   id:     uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   slug:   text("slug").notNull(),
   label:  text("label").notNull(),
 });
@@ -51,7 +41,7 @@ export const entryTags = pgTable("entry_tags", {
 
 export const links = pgTable("links", {
   id:        uuid("id").primaryKey().defaultRandom(),
-  userId:    uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId:    text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   sourceId:  uuid("source_id").notNull().references(() => entries.id, { onDelete: "cascade" }),
   targetId:  uuid("target_id").notNull().references(() => entries.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
