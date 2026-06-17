@@ -156,7 +156,6 @@ GET    /graph                 knowledge graph nodes + edges
 GET    /digest/today          today's resurfaced entries
 ```
 
-Full API design is documented in [`CLAUDE.md`](./CLAUDE.md).
 
 ---
 
